@@ -1,76 +1,75 @@
-let playersChoice = "";
-let computerChoice = "";
-let score = 0;
+const playerScore = document.querySelector("#playerScore");
+const computerScore = document.querySelector("#computerScore");
+const playerChoice = document.querySelector("#playerChoice"); 
+const computerChoice = document.querySelector("#computerChoice");
+const buttons = document.querySelectorAll("div.playerSelection button");
+const playAgainBtn = document.querySelector("#playAgain")
+const resultMessage = document.querySelector("#result");
+
+let playerSelection = "";
+let computerSelection = "";
+let pScore = 0;
+let cScore = 0;
+
+
+buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        checkWinner();
+        playerSelection = button.id;
+        game();
+    });
+});
+
 
 function getComputerChoice() {
-    const randomNumber = Math.floor(Math.random() * 3);
-    if (randomNumber === 0) {
-        return "rock";
-    } else if (randomNumber === 1) {
-        return "paper";
+    const choiceArr = ["rock", "paper", "scissors"];
+    return computerSelection = choiceArr[Math.floor(Math.random() * 3)];
+}
+
+function playRound(playerSelection, computerSelection) {
+    if (playerSelection === computerSelection) {
+        resultMessage.textContent = "It's a tie!";
+    } else if ((playerSelection === "rock" && computerSelection  === "paper") ||
+    (playerSelection === "paper" && computerSelection === "scissors") ||
+    (playerSelection === "scissors" && computerSelection === "rock")) {
+        resultMessage.textContent = "You lost!";
+        cScore++;
     } else {
-        return "scissors";
+        resultMessage.textContent = "You won!";
+        pScore++;
     }
 }
-
-function getPlayersChoice() {
-    const playersChoice = prompt("Rock, Paper, or Scissors? Pick one!").toLowerCase();
-    return playersChoice
-}
-
 
 function game() {
-    for (let i = 0; i < 5; i++) {
-        computerChoice = getComputerChoice();
-        console.log(computerChoice)
-        playersChoice = getPlayersChoice();
-        if (playersChoice !== "rock" && playersChoice !== "paper" && playersChoice !== "scissors")  {
-            console.log("Try again");
-            i--;
-            continue;
+    getComputerChoice();
+    playRound(playerSelection, computerSelection);
+    scoreBoard();
+    checkWinner();
+}
+
+function scoreBoard() {
+    //display players and computers choice selection
+    playerChoice.textContent = playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1);
+    computerChoice.textContent = computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1);
+    //display the current score
+    playerScore.textContent = pScore;
+    computerScore.textContent = cScore;
+}
+
+function checkWinner() {
+    if (pScore === 5 || cScore === 5) {
+        if (pScore === 5) {
+            resultMessage.textContent = "Awesome! You Won!";
+        } else {
+            resultMessage.textContent = "You Lost! Try Again!"
         }
-        console.log(computerChoice)
-        playGame(playersChoice, computerChoice);
-    }
-    return alert("Your score is " + score + "/5");
-}
-
-
-function playGame(playerSelection, computerSelection)   {
-    switch(true) {
-        case (computerSelection === "rock" && playerSelection === "rock"):
-            alert("It's a tie!");
-            break;
-        case (computerSelection === "rock" && playerSelection === "paper"):
-            alert("You lost! Paper beats rock")
-            break;
-        case (computerSelection === "rock" && playerSelection === "scissors"):
-            alert("You won! Rock beats scissors");
-            score++;
-            break;
-        case (computerSelection === "paper" && playerSelection === "paper"):
-            alert("It's a tie!");
-            break;
-        case (computerSelection === "paper" && playerSelection === "rock"):
-            alert("You won! Paper beats rock!");
-            score++;
-            break;
-        case (computerSelection === "paper" && playerSelection === "scissors"):
-            alert("You lost! Scissors beats paper");
-            break;
-        case (computerSelection === "scissors" && playerSelection === "scissors"):
-            alert("It's a tie!");
-            break;
-        case (computerSelection === "scissors" && playerSelection === "rock"):
-            alert("You lost! Rock beats scissors");
-            break;
-        case (computerSelection === "scissors" && playerSelection === "paper"):
-            alert("You won! Scissors beats paper");
-            score++;
-            break;
+        buttons.addEventListener('click', disableButton);
     }
 }
 
-game();
+const disableButton = () => {
+    buttons.disabled = true;
+}
 
-
+//reset the game
+playAgainBtn.addEventListener('click', () => location.reload());
